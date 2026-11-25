@@ -1,0 +1,9 @@
+policies:
+  appdb:
+    repos: [r2, nas, gdrive]
+    schedule: hourly
+    retention: { hourly: 24, daily: 14, weekly: 8 }
+  config:
+    repos: [r2, nas]
+    schedule: daily
+    retention: { daily: 14, weekly: 8 }

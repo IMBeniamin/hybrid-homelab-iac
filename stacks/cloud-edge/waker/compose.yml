@@ -1,0 +1,22 @@
+services:
+  waker:
+    build: .
+    image: example/waker:1
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      ROUTER_USER: ${ROUTER_USER:?}
+      ROUTER_PASS: ${ROUTER_PASS:?}
+      ROUTER_URL: http://192.168.50.1/rest/tool/wol
+      TARGET_HOST: 192.168.50.10
+      TARGET_MAC: "02:00:00:00:00:10"
+      SLEEP_ENABLED: "false"
+    networks:
+      - apps
+
+networks:
+  apps:
+    external: true

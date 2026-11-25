@@ -1,0 +1,26 @@
+services:
+  reverse-proxy:
+    host: cloud-edge
+    deploy: portainer
+    tier: critical
+    failover: homelab
+    backup: config
+  authentik:
+    host: cloud-edge
+    deploy: portainer
+    env: secrets/portainer-authentik.env.tpl
+    tier: critical
+    failover: homelab
+    backup: appdb
+  waker:
+    host: cloud-edge
+    deploy: portainer
+    env: secrets/portainer-waker.env.tpl
+    tier: standard
+    backup: none
+  immich:
+    host: homelab
+    deploy: portainer
+    env: secrets/portainer-immich.env.tpl
+    tier: standard
+    backup: gdrive

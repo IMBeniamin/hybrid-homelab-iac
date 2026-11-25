@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: opentofu/setup-opentofu@v1
+      - name: Check OpenTofu formatting and validate configs
+        run: |
+          for dir in tofu/cloudflare tofu/oci tofu/routeros; do
+            tofu -chdir="$dir" fmt -check -diff
+            tofu -chdir="$dir" init -backend=false
+            tofu -chdir="$dir" validate
+          done
+      - name: Validate inventory model
+        run: python3 -m pip install pyyaml && python3 scripts/validate_inventory.py
+      - name: Syntax check Ansible playbook
+        run: |
+          python3 -m pip install ansible-core
+          ansible-playbook -i ansible/inventory.yml ansible/site.yml --syntax-check
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

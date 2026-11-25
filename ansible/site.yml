@@ -1,0 +1,23 @@
+---
+- name: Cloud edge baseline
+  hosts: cloud-edge
+  gather_facts: false
+  tasks:
+    - name: Ensure hardened sshd drop-in directory exists
+      ansible.builtin.file:
+        path: /etc/ssh/sshd_config.d
+        state: directory
+        mode: "0755"
+
+- name: Homelab fail-closed storage baseline
+  hosts: homelab
+  gather_facts: false
+  vars:
+    luks_mappings:
+      - luks-disk-a
+      - luks-disk-b
+  tasks:
+    - name: Verify declared LUKS mapping list is non-empty
+      ansible.builtin.assert:
+        that:
+          - luks_mappings | length >= 2
